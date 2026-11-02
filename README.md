@@ -56,6 +56,8 @@ To skip a single line, put `secret-guard-ignore` in a comment on it or on the li
 const key = 'sk_test_...';
 ```
 
+For a whole file of fixtures, put `secret-guard-ignore-file` in a comment in its first few lines.
+
 ## Running locally
 
 ```bash

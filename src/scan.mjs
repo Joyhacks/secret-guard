@@ -110,6 +110,8 @@ export function scanText(text, fileName, { allow = new Set(), envFiles = false }
   const base = basename(fileName);
   const isEnv = ENV_FILE.test(base);
   if (isEnv && ENV_TEMPLATE.test(base)) return findings;
+  // Test fixtures full of deliberate examples opt out with a marker near the top.
+  if (text.slice(0, 500).includes(IGNORE_MARK + '-file')) return findings;
 
   // Public-prefixed variables named like secrets, in code or env files.
   const nameRe = /\b([A-Z][A-Z0-9_]{3,})\b/g;

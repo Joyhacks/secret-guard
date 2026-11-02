@@ -1,3 +1,4 @@
+// secret-guard-ignore-file: this file is full of deliberate examples of every rule.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
@@ -110,4 +111,10 @@ test('CLI exit codes and GitHub annotation format', () => {
   assert.ok(gh.some((l) => /^::error file=.*worse\.ts,line=1,title=Secret Guard%3A public-secret-name::/.test(l)));
   assert.equal(main(['--bogus'], () => {}), 2);
   assert.equal(main(['--env-files', 'maybe'], () => {}), 2);
+});
+
+test('a file-level marker skips the whole file', () => {
+  const body = 'import.meta.env.VITE_OPENAI_API_KEY';
+  assert.deepEqual(rules(`// secret-guard-ignore-file: fixtures\n${body}`), []);
+  assert.deepEqual(rules(`${'// filler line\n'.repeat(50)}// secret-guard-ignore-file\n\n\n${body}`), ['public-secret-name'], 'marker must be near the top');
 });
