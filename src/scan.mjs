@@ -111,7 +111,7 @@ export function scanText(text, fileName, { allow = new Set(), envFiles = false }
   const isEnv = ENV_FILE.test(base);
   if (isEnv && ENV_TEMPLATE.test(base)) return findings;
 
-  // 1. Public-prefixed variables named like secrets, in code or env files.
+  // Public-prefixed variables named like secrets, in code or env files.
   const nameRe = /\b([A-Z][A-Z0-9_]{3,})\b/g;
   const seen = new Set();
   for (const m of text.matchAll(nameRe)) {
@@ -128,7 +128,7 @@ export function scanText(text, fileName, { allow = new Set(), envFiles = false }
     // Locally, .env files are supposed to hold secrets (they're gitignored).
     // Only judge their contents in CI, where the checkout is exactly what's in git.
     if (!envFiles) return findings;
-    // 2. Committed env file holding server-side values. Public-prefixed values
+    // Committed env file holding server-side values. Public-prefixed values
     //    (VITE_SUPABASE_URL, the anon key) ship to the browser anyway, so a file
     //    with only those, like the one Lovable commits, is fine.
     lines.forEach((l, i) => {
@@ -143,7 +143,7 @@ export function scanText(text, fileName, { allow = new Set(), envFiles = false }
       }
     });
   } else {
-    // 3. Server-only env read from a Next.js client component.
+    // Server-only env read from a Next.js client component.
     const head = text.slice(0, 400);
     if (/^\s*(?:\/\/[^\n]*\n|\/\*[\s\S]*?\*\/\s*)*\s*['"]use client['"]/.test(head)) {
       for (const m of text.matchAll(/process\.env\.([A-Z0-9_]+)|process\.env\[['"]([A-Z0-9_]+)['"]\]/g)) {
@@ -155,7 +155,6 @@ export function scanText(text, fileName, { allow = new Set(), envFiles = false }
     }
   }
 
-  // 4. Literal secrets.
   for (const rule of LITERALS) {
     for (const m of text.matchAll(rule.re)) {
       push(rule.level, rule.id, m.index, `Hardcoded ${rule.what} (${mask(m[0])}). Remove it, rotate it, and load it from a server-side environment variable.`);
