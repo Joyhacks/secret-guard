@@ -1,0 +1,41 @@
+name: 'Secret Guard'
+description: 'Fails the build when API keys or server secrets are headed for the browser. Next.js, Vite, Lovable, Expo and more.'
+author: 'Adeola Ilori'
+branding:
+  icon: 'shield'
+  color: 'orange'
+
+inputs:
+  path:
+    description: 'Folder to scan, relative to the repo root.'
+    required: false
+    default: '.'
+  allow:
+    description: 'Comma-separated variable names to skip, for names that look secret but are public on purpose.'
+    required: false
+    default: ''
+  strict:
+    description: 'Also fail on warnings (for example Stripe test keys).'
+    required: false
+    default: 'false'
+  env-files:
+    description: 'Check committed .env files: auto (on in CI), on or off.'
+    required: false
+    default: 'auto'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Scan for exposed secrets
+      shell: bash
+      # Inputs go through env, never interpolated into the script, so a
+      # crafted input cannot inject shell commands.
+      env:
+        SG_PATH: ${{ inputs.path }}
+        SG_ALLOW: ${{ inputs.allow }}
+        SG_STRICT: ${{ inputs.strict }}
+        SG_ENV_FILES: ${{ inputs.env-files }}
+      run: |
+        args=(--path "$SG_PATH" --allow "$SG_ALLOW" --env-files "$SG_ENV_FILES" --format github)
+        if [ "$SG_STRICT" = "true" ]; then args+=(--strict); fi
+        node "$GITHUB_ACTION_PATH/src/scan.mjs" "${args[@]}"

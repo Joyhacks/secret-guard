@@ -1,0 +1,23 @@
+{
+  "name": "secret-guard",
+  "version": "1.0.0",
+  "description": "Catches API keys and server secrets headed for the browser in Next.js, Vite, Lovable, Expo, SvelteKit and Astro apps.",
+  "type": "module",
+  "bin": {
+    "secret-guard": "src/scan.mjs"
+  },
+  "files": ["src"],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["security", "secrets", "nextjs", "vite", "lovable", "supabase", "github-action"],
+  "author": "Adeola Ilori",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Joyhacks/secret-guard.git"
+  }
+}
